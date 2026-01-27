@@ -71,8 +71,6 @@ class Command(BaseCommand):
             {'title': 'Идиот', 'author_idx': 2, 'year': 1869, 'pages': 656, 'genre_idxs': [2], 'rating': 9.5},
             {'title': 'Мастер и Маргарита', 'author_idx': 2, 'year': 1967, 'pages': 480, 'genre_idxs': [2, 0],
              'rating': 9.9},
-            {'title': 'Убить пересмешника', 'author_idx': 0, 'year': 1960, 'pages': 324, 'genre_idxs': [2],
-             'rating': 9.4},
         ]
 
         for book_data in books_data:
@@ -96,11 +94,11 @@ class Command(BaseCommand):
         # Создаем тестовых пользователей
         test_users = [
             {'username': 'reader1', 'email': 'reader1@example.com', 'password': 'reader123', 'first_name': 'Иван',
-             'last_name': 'Иванов'},
+             'last_name': 'Шакаева'},
             {'username': 'reader2', 'email': 'reader2@example.com', 'password': 'reader123', 'first_name': 'Петр',
              'last_name': 'Петров'},
             {'username': 'reader3', 'email': 'reader3@example.com', 'password': 'reader123', 'first_name': 'Мария',
-             'last_name': 'Сидорова'},
+             'last_name': 'Гагарин'},
         ]
 
         for user_data in test_users:
