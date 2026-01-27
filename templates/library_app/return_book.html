@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Возврат книги - Библиотека{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning">
+                <h4 class="mb-0"><i class="bi bi-box-arrow-in-left"></i> Возврат книги</h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h5>Информация о выдаче:</h5>
+                    <p><strong>Книга:</strong> {{ issue.book.title }}</p>
+                    <p><strong>Автор:</strong> {{ issue.book.author.last_name }} {{ issue.book.author.first_name }}</p>
+                    <p><strong>Дата выдачи:</strong> {{ issue.issue_date|date:"d.m.Y" }}</p>
+                    <p><strong>Срок возврата:</strong> {{ issue.due_date|date:"d.m.Y" }}</p>
+                    {% if issue.due_date < now.date %}
+                        <p class="text-danger"><strong>Книга просрочена на {{ now.date|date:"U"|add:0|add:issue.due_date|date:"U"|add:0|divide:86400|abs }} дней</strong></p>
+                    {% endif %}
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Состояние книги при возврате</label>
+                        <textarea name="condition_notes" class="form-control" rows="3" placeholder="Опишите состояние книги..."></textarea>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="is_damaged" class="form-check-input" id="isDamaged">
+                        <label class="form-check-label" for="isDamaged">
+                            Книга повреждена
+                        </label>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-check-circle"></i> Подтвердить возврат
+                        </button>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary text-center">
+                            <i class="bi bi-arrow-left"></i> Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Напоминания - Библиотека{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="bi bi-bell"></i> Напоминания о возврате книг</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-clock"></i> Скоро нужно вернуть (в ближайшие 3 дня)</h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_returns %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Книга</th>
+                                    <th>Дата выдачи</th>
+                                    <th>Срок возврата</th>
+                                    <th>Осталось дней</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for issue in upcoming_returns %}
+                                    <tr>
+                                        <td>{{ issue.book.title }}</td>
+                                        <td>{{ issue.issue_date|date:"d.m.Y" }}</td>
+                                        <td>{{ issue.due_date|date:"d.m.Y" }}</td>
+                                        <td>
+                                            {% with days_left=issue.due_date|date:"U"|add:0|add:now.date|date:"U"|add:0|divide:86400|abs %}
+                                                {% if days_left <= 0 %}
+                                                    <span class="badge bg-danger">Сегодня</span>
+                                                {% elif days_left == 1 %}
+                                                    <span class="badge bg-warning">Завтра</span>
+                                                {% else %}
+                                                    <span class="badge bg-info">{{ days_left|floatformat:0 }} дней</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'return_book' issue.id %}" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-box-arrow-in-left"></i> Вернуть сейчас
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">Нет книг, которые нужно вернуть в ближайшие 3 дня.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Просроченные книги</h5>
+            </div>
+            <div class="card-body">
+                {% if overdue_books %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-info-circle"></i> У вас есть просроченные книги! Пожалуйста, верните их как можно скорее, чтобы избежать штрафов.
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Книга</th>
+                                    <th>Дата выдачи</th>
+                                    <th>Срок возврата</th>
+                                    <th>Просрочка</th>
+                                    <th>Штраф</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for issue in overdue_books %}
+                                    <tr>
+                                        <td>{{ issue.book.title }}</td>
+                                        <td>{{ issue.issue_date|date:"d.m.Y" }}</td>
+                                        <td>{{ issue.due_date|date:"d.m.Y" }}</td>
+                                        <td>
+                                            {% with days_overdue=now.date|date:"U"|add:0|add:issue.due_date|date:"U"|add:0|divide:86400|abs %}
+                                                <span class="badge bg-danger">{{ days_overdue|floatformat:0 }} дней</span>
+                                            {% endwith %}
+                                        </td>
+                                        <td>
+                                            {% if issue.fine_amount > 0 %}
+                                                <span class="badge bg-danger">{{ issue.fine_amount }} руб.</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Рассчитывается</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'return_book' issue.id %}" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-box-arrow-in-left"></i> Вернуть с оплатой
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">У вас нет просроченных книг. Отлично!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

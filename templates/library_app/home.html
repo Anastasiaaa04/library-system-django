@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Система управления библиотекой{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Добро пожаловать в систему управления библиотекой!</h1>
+            <p class="lead">Современное решение для автоматизации библиотечных процессов.</p>
+            <hr class="my-4">
+            <p>Здесь вы можете найти книги, оформить выдачу, отслеживать историю чтения и многое другое.</p>
+            <a class="btn btn-primary btn-lg" href="{% url 'catalog' %}" role="button">
+                <i class="bi bi-book"></i> Перейти в каталог
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-book me-2"></i>Каталог книг</h5>
+                <p class="card-text">Более 10,000 книг в электронном и печатном форматах</p>
+                <a href="{% url 'catalog' %}" class="btn btn-light">Посмотреть</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-search me-2"></i>Поиск</h5>
+                <p class="card-text">Быстрый и удобный поиск по названию, автору и жанру</p>
+                <a href="{% url 'catalog' %}" class="btn btn-light">Найти книгу</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person me-2"></i>Личный кабинет</h5>
+                <p class="card-text">Отслеживайте свои выдачи и историю чтения</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'profile' %}" class="btn btn-light">Мой профиль</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-light">Войти</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">О системе</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Система управления библиотекой предоставляет полный функционал для автоматизации
+                    работы библиотеки. Возможности включают:
+                </p>
+                <ul>
+                    <li>Управление каталогом книг</li>
+                    <li>Учет читателей и их выдач</li>
+                    <li>Поиск и фильтрация книг</li>
+                    <li>История чтения для каждого пользователя</li>
+                    <li>Статистика и отчеты</li>
+                    <li>Напоминания о возврате книг</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

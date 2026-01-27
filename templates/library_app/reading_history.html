@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}История чтения - Библиотека{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-clock-history"></i> История чтения</h4>
+            </div>
+            <div class="card-body">
+                {% if page_obj %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Книга</th>
+                                    <th>Автор</th>
+                                    <th>Дата выдачи</th>
+                                    <th>Срок возврата</th>
+                                    <th>Дата возврата</th>
+                                    <th>Статус</th>
+                                    <th>Штраф</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for issue in page_obj %}
+                                    <tr>
+                                        <td>{{ issue.book.title }}</td>
+                                        <td>{{ issue.book.author.last_name }} {{ issue.book.author.first_name|slice:":1" }}.</td>
+                                        <td>{{ issue.issue_date|date:"d.m.Y" }}</td>
+                                        <td>{{ issue.due_date|date:"d.m.Y" }}</td>
+                                        <td>
+                                            {% if issue.is_returned %}
+                                                {{ issue.return_date|date:"d.m.Y" }}
+                                            {% else %}
+                                                <span class="badge bg-warning">Не возвращена</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if issue.is_returned %}
+                                                <span class="badge bg-success">Возвращена</span>
+                                            {% else %}
+                                                <span class="badge bg-info">В процессе</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if issue.fine_amount > 0 %}
+                                                <span class="badge bg-danger">{{ issue.fine_amount }} руб.</span>
+                                            {% else %}
+                                                <span class="badge bg-success">0 руб.</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Пагинация -->
+                    {% if page_obj.has_other_pages %}
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1" aria-label="First">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&lsaquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for i in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ i }}</span>
+                                        </li>
+                                    {% elif i >= page_obj.number|add:-2 and i <= page_obj.number|add:2 %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&rsaquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> История чтения пуста.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Статистика - Библиотека{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1><i class="bi bi-bar-chart"></i> Статистика и рекомендации</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-book me-2"></i>Всего выдач</h5>
+                <p class="card-text display-4">{{ total_issues }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle me-2"></i>Возвращено</h5>
+                <p class="card-text display-4">{{ returned_books }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-clock me-2"></i>Текущие</h5>
+                <p class="card-text display-4">{{ current_issues }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-star me-2"></i>Любимый жанр</h5>
+                <p class="card-text h4">
+                    {% if favorite_genres %}
+                        {{ favorite_genres.first.name }}
+                    {% else %}
+                        Не определен
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Ваши любимые жанры</h5>
+            </div>
+            <div class="card-body">
+                {% if favorite_genres %}
+                    <div class="list-group">
+                        {% for genre in favorite_genres %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ genre.name }}
+                                <span class="badge bg-primary rounded-pill">{{ genre.book_count }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">У вас пока нет данных для анализа любимых жанров.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Рекомендуемые книги</h5>
+            </div>
+            <div class="card-body">
+                {% if recommended_books %}
+                    <div class="row">
+                        {% for book in recommended_books|slice:":4" %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100">
+                                    {% if book.cover_image %}
+                                        <img src="{{ book.cover_image.url }}" class="card-img-top" alt="{{ book.title }}" style="height: 150px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 150px;">
+                                            <i class="bi bi-book h1 text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ book.title|truncatechars:25 }}</h6>
+                                        <p class="card-text text-muted small">{{ book.author.last_name }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge bg-warning">{{ book.rating|floatformat:1 }}</span>
+                                            <a href="{% url 'book_detail' book.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Рекомендации пока недоступны.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Самые популярные книги в библиотеке</h5>
+            </div>
+            <div class="card-body">
+                {% if popular_books %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Место</th>
+                                    <th>Книга</th>
+                                    <th>Автор</th>
+                                    <th>Жанр</th>
+                                    <th>Количество выдач</th>
+                                    <th>Рейтинг</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for book in popular_books %}
+                                    <tr>
+                                        <td><strong>{{ forloop.counter }}</strong></td>
+                                        <td>{{ book.title }}</td>
+                                        <td>{{ book.author.last_name }} {{ book.author.first_name|slice:":1" }}.</td>
+                                        <td>
+                                            {% for genre in book.genre.all|slice:":2" %}
+                                                <span class="badge bg-secondary me-1">{{ genre.name }}</span>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ book.issue_count }}</td>
+                                        <td>
+                                            <span class="badge bg-warning">{{ book.rating|floatformat:1 }}/10</span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Нет данных о популярных книгах.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
