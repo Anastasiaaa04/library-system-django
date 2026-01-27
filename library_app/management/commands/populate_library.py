@@ -46,7 +46,6 @@ class Command(BaseCommand):
                 last_name=author_data['last_name'],
                 defaults={
                     'birth_date': author_data['birth_date'],
-                    'biography': f'Великий русский поэт и писатель {author_data["first_name"]} {author_data["last_name"]}. Автор множества известных произведений.'
                 }
             )
             authors.append(author)
@@ -69,7 +68,7 @@ class Command(BaseCommand):
              'genre_idxs': [0, 3], 'rating': 9.1},
             {'title': 'Анна Каренина', 'author_idx': 1, 'year': 1877, 'pages': 864, 'genre_idxs': [2], 'rating': 9.7},
             {'title': 'Идиот', 'author_idx': 2, 'year': 1869, 'pages': 656, 'genre_idxs': [2], 'rating': 9.5},
-            {'title': 'Мастер и Маргарита', 'author_idx': 2, 'year': 1967, 'pages': 480, 'genre_idxs': [2, 0],
+            {'title': 'Гарри Поттер и тайная комната', 'author_idx': 7, 'year': 1998, 'pages': 480, 'genre_idxs': [2, 0],
              'rating': 9.9},
         ]
 
