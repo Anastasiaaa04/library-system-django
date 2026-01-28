@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -18,6 +19,10 @@ class Author(models.Model):
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
+
+    def get_absolute_url(self):
+        """URL для детальной страницы автора"""
+        return reverse('author_detail', kwargs={'author_id': self.pk})
 
 
 class Genre(models.Model):
@@ -65,12 +70,23 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        """URL для детальной страницы книги"""
+        return reverse('book_detail', kwargs={'book_id': self.pk})
+
     def get_average_rating(self):
         """Получить средний рейтинг книги"""
         reviews = self.reviews.all()
         if reviews:
             return sum(review.rating for review in reviews) / len(reviews)
         return 0
+
+    @property
+    def cover_preview(self):
+        """Превью обложки для админки"""
+        if self.cover_image:
+            return self.cover_image.url
+        return None
 
 
 class Reader(models.Model):
@@ -90,6 +106,10 @@ class Reader(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.user.get_full_name()}"
 
+    def get_absolute_url(self):
+        """URL для профиля читателя"""
+        return reverse('profile')
+
 
 class BookIssue(models.Model):
     """Модель выдачи книги"""
@@ -108,6 +128,10 @@ class BookIssue(models.Model):
 
     def __str__(self):
         return f"{self.book.title} - {self.reader.user.username}"
+
+    def get_absolute_url(self):
+        """URL для детальной страницы выдачи"""
+        return reverse('return_book', kwargs={'issue_id': self.pk})
 
     def calculate_fine(self):
         """Расчет штрафа за просрочку"""
@@ -131,6 +155,10 @@ class BookReturn(models.Model):
     def __str__(self):
         return f"Return: {self.issue.book.title} by {self.issue.reader.user.username}"
 
+    def get_absolute_url(self):
+        """URL для детальной страницы возврата"""
+        return reverse('return_book', kwargs={'issue_id': self.issue.pk})
+
 
 class BookReview(models.Model):
     """Модель отзыва о книге"""
@@ -149,3 +177,7 @@ class BookReview(models.Model):
 
     def __str__(self):
         return f"Review by {self.reader.user.username} for {self.book.title}"
+
+    def get_absolute_url(self):
+        """URL для детальной страницы отзыва"""
+        return reverse('book_detail', kwargs={'book_id': self.book.pk})
